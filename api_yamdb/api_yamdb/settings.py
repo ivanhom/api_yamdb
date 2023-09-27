@@ -1,3 +1,5 @@
+import os
+
 from pathlib import Path
 
 from datetime import timedelta
@@ -104,6 +106,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 
 STATIC_URL = '/static/'
+
+# Директория с тестовыми данными
+
+CSV_DIR = os.path.join(BASE_DIR, 'static/data/')
 
 STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
 
