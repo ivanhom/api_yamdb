@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# TODO допилить админку
+from reviews.models import Category, Genre, Title, GenreTitle
+
+admin.site.register(Genre)
+admin.site.register(Category)
+admin.site.register(Title)
+admin.site.register(GenreTitle)
