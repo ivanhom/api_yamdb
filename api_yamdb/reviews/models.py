@@ -3,6 +3,9 @@ from django.db import models
 from users.models import MyUser
 
 
+from users.models import MyUser
+
+
 class Genre(models.Model):
     name = models.CharField(
         verbose_name='Название жанра',

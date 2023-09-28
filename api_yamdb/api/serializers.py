@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from reviews.models import Category, Comment, Genre, Review, Title
 
+from rest_framework.relations import SlugRelatedField
+
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:

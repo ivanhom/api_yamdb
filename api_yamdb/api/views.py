@@ -54,12 +54,15 @@ class GenreViewSet(CreateListViewSet):
     lookup_field = 'slug'
 
 
+
 class CommentViewSet(NoPutModelViewSet):
     """ViewSet модели Comment."""
     serializer_class = CommentSerializer
     permission_classes = (IsAuthenticatedOrReadOnly, IsAuthorOrJustReading)
     http_method_names = ['get', 'post', 'patch', 'delete', 'head']
+
     pagination_class = PageNumberPagination
+
 
     def get_related_post(self):
         return get_object_or_404(Review, pk=self.kwargs['review_id'])
