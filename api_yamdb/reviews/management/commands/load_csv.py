@@ -1,19 +1,17 @@
 """Загрузка тестовых данных в БД для тестирования
 Сделано по мотивам статьи
     https://stacktuts.com/how-to-import-csv-data-into-django-models
-    
+
 Для запуска выполнить python manage.py load_csv
 """
 
 import csv
 
+from api_yamdb.settings import CSV_DIR
 from django.core.management import BaseCommand, call_command
 from django.db import IntegrityError
 
 from reviews.models import Category, Genre, Title
-
-from api_yamdb.settings import CSV_DIR
-
 
 MODELS_FILES = {
     Category: "category.csv",
