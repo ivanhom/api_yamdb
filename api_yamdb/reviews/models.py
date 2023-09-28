@@ -1,5 +1,7 @@
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from users.models import MyUser
+
 
 from users.models import MyUser
 
@@ -45,8 +47,8 @@ class Title(models.Model):
         related_name='titles',
         verbose_name='Категория',)
 
-    description = models.TextField(null=True,verbose_name='Описание',)
-    
+    description = models.TextField(null=True, verbose_name='Описание',)
+
     class Meta:
         ordering = ['-id']
         verbose_name = 'Название'
@@ -99,9 +101,11 @@ class Review(models.Model):
         related_name='genre', blank=True, null=True
     )
     score = models.IntegerField(
-        validators=[MinValueValidator(0),
-                    MaxValueValidator(10)]
-                )
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(10)
+        ]
+    )
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
 

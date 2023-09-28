@@ -9,3 +9,8 @@ class CreateListViewSet(
     viewsets.GenericViewSet,
 ):
     pagination_class = LimitOffsetPagination
+
+
+class NoPutModelViewSet(viewsets.ModelViewSet):
+    """Вьюсет, запрещающий метод PUT."""
+    http_method_names = ('get', 'patch', 'post', 'delete')
