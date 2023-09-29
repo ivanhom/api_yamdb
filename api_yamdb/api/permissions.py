@@ -17,6 +17,5 @@ class IsAdminOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
         elif request.user.is_authenticated:
-            # ToDo проверить на админа !!!
-            return request.user.is_admin
+            return request.user.role == 'admin'
         return False
