@@ -60,6 +60,7 @@ class GetTokenSerializer(serializers.Serializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    """Сериалайзер для Категорий."""
     class Meta:
         model = Category
         fields = (
@@ -69,6 +70,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class GenreSerializer(serializers.ModelSerializer):
+    """Сериалайзер для Жанров."""
     class Meta:
         model = Genre
         fields = (
@@ -78,18 +80,21 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class TitleSerializerRead(serializers.ModelSerializer):
+    """Сериалайзер для Произведений(их названий)."""
     category = CategorySerializer(many=False, read_only=True)
     genre = GenreSerializer(many=True, read_only=True)
     rating = serializers.FloatField(read_only=True)
     rating = serializers.IntegerField(
         required=False
     )
+
     class Meta:
         model = Title
         fields = '__all__'
 
 
 class TitleSerializerWrite(serializers.ModelSerializer):
+    """Сериалайзер для Произведений(их названий)."""
     category = serializers.SlugRelatedField(
         slug_field='slug',
         read_only=False,
@@ -108,6 +113,7 @@ class TitleSerializerWrite(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    """Сериалайзер для Отзывов."""
     author = serializers.SlugRelatedField(
         slug_field='username', read_only=True
     )
@@ -118,6 +124,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    """Сериалайзер для Комментариев."""
     author = serializers.SlugRelatedField(
         read_only=True, slug_field='username'
     )

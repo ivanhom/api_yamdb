@@ -6,6 +6,7 @@ User = get_user_model()
 
 
 class Genre(models.Model):
+    """Модель для жанров."""
     name = models.CharField(
         verbose_name='Название жанра',
         max_length=256,
@@ -25,6 +26,7 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
+    """Модель для Названий произведений."""
     name = models.CharField(
         max_length=256,)
 
@@ -47,7 +49,6 @@ class Title(models.Model):
         verbose_name='Категория',)
 
     description = models.TextField(null=True, verbose_name='Описание',)
-    # rating = models.FloatField(null=True, blank=True) возможно надо добавить
 
     class Meta:
         ordering = ('-id',)
@@ -59,6 +60,7 @@ class Title(models.Model):
 
 
 class Category(models.Model):
+    """Модель для Категорий."""
     name = models.CharField(
         max_length=256,
         verbose_name='Название категории')
@@ -76,6 +78,7 @@ class Category(models.Model):
 
 
 class GenreTitle(models.Model):
+    """Модель для связи жанров и произведений."""
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
 
