@@ -4,7 +4,9 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, mixins, permissions, status, viewsets
+from rest_framework import (
+    filters, mixins, permissions, serializers, status, viewsets
+)
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import (
@@ -27,7 +29,7 @@ from api.serializers import (
 from api.permissions import (
     IsAdminOrReadOnly, IsAuthorOrJustReading, IsSuperUserOrAdmin
 )
-from reviews.models import Category, Comment, Genre, Review, Title
+from reviews.models import Category, Genre, Review, Title
 
 User = get_user_model()
 
@@ -74,8 +76,7 @@ class CommentViewSet(NoPutModelViewSet):
     """ViewSet модели Comment."""
 
     serializer_class = CommentSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly, IsAuthorOrJustReading)
-    http_method_names = ('get', 'post', 'patch', 'delete', 'head')
+    permission_classes = (IsAuthorOrJustReading, IsAuthenticatedOrReadOnly)
 
     pagination_class = PageNumberPagination
 
@@ -93,55 +94,24 @@ class CommentViewSet(NoPutModelViewSet):
         )
 
 
-# Перенес сюда из дублирующей папки. Решайте сами что с этим делать
-# class CommentViewSet(viewsets.ModelViewSet):
-#     serializer_class = CommentSerializer
-#     permission_classes = (IsAuthorOrJustReading, )
-#     pagination_class = LimitOffsetPagination
-
-#     def get_related_post(self):
-#         return get_object_or_404(Comment, pk=self.kwargs['post_id'])
-
-#     def get_queryset(self):
-#         return self.get_related_post().comments.all()
-
-#     def perform_create(self, serializer):
-#         serializer.save(
-#             author=self.request.user,
-#             post=self.get_related_post()
-#         )
-
-
-class ReviewViewSet(viewsets.ModelViewSet):
+class ReviewViewSet(NoPutModelViewSet):
     """ViewSet модели Review."""
 
+    queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes = (IsAuthenticatedOrReadOnly, IsAuthorOrJustReading)
-    queryset = Review.objects.all()
-    http_method_names = ('get', 'post', 'patch', 'delete', 'head')
     pagination_class = LimitOffsetPagination
 
     def perform_create(self, serializer):
-        serializer.save(
-            author=self.request.user
-        )
-
-
-# Перенес сюда из дублирующей папки. Решайте сами что с этим делать
-# class ReviewViewSet(viewsets.ModelViewSet):
-#     serializer_class = ReviewSerializer
-#     permission_classes = (IsAuthenticatedOrReadOnly, )
-#     queryset = Review.objects.all()
-#     pagination_class = LimitOffsetPagination
-
-#     def get_related_post(self):
-#         return get_object_or_404(Review, pk=self.kwargs['post_id'])
-
-#     def perform_create(self, serializer):
-#         serializer.save(
-#             author=self.request.user,
-#             post=self.get_related_post()
-#         )
+        title_id = self.kwargs.get('title_id')
+        title = get_object_or_404(Title, id=title_id)
+        user = self.request.user
+        if Review.objects.filter(title_id=title_id, author=user).exists():
+            raise serializers.ValidationError(
+                'Вы уже оставляли отзыв на это произведение.',
+                status.HTTP_400_BAD_REQUEST
+            )
+        serializer.save(author=user, title=title)
 
 
 class UserViewSet(viewsets.ModelViewSet):

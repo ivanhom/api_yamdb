@@ -47,6 +47,7 @@ class Title(models.Model):
         verbose_name='Категория',)
 
     description = models.TextField(null=True, verbose_name='Описание',)
+    # rating = models.FloatField(null=True, blank=True) возможно надо добавить
 
     class Meta:
         ordering = ('-id',)
@@ -90,8 +91,8 @@ class Review(models.Model):
     """Модель для отзывов."""
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='author')
-    review = models.ForeignKey(
-        Title, on_delete=models.CASCADE, related_name='review', null=True)
+    title = models.ForeignKey(
+        Title, on_delete=models.CASCADE, related_name='title', null=True)
     text = models.TextField()
     image = models.ImageField(
         upload_to='review/', null=True, blank=True)
@@ -108,6 +109,18 @@ class Review(models.Model):
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
 
+    class Meta:
+        verbose_name = 'Обзор'
+        verbose_name_plural = 'Обзоры'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['title', 'author'], name='unique_review'
+            ),
+        ]
+
+    def __str__(self):
+        return self.text[:50]
+
 
 class Comment(models.Model):
     """Модель для комментов к отзывам."""
@@ -118,3 +131,10 @@ class Comment(models.Model):
     text = models.TextField()
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
+
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+
+    def __str__(self):
+        return self.name
