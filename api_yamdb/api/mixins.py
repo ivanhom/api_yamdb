@@ -8,6 +8,7 @@ class CreateListViewSet(
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
+    """Набор представлений для моделей Категории и Жанры."""
     pagination_class = LimitOffsetPagination
 
 
