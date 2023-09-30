@@ -92,7 +92,7 @@ class Review(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='author')
     title = models.ForeignKey(
-        Title, on_delete=models.CASCADE, related_name='title', null=True)
+        Title, on_delete=models.CASCADE, related_name='reviews', null=True)
     text = models.TextField()
     image = models.ImageField(
         upload_to='review/', null=True, blank=True)
@@ -133,6 +133,7 @@ class Comment(models.Model):
         'Дата добавления', auto_now_add=True, db_index=True)
 
     class Meta:
+        ordering = ('-id',)
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
 
