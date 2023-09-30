@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import (
@@ -37,7 +38,9 @@ User = get_user_model()
 class TitleViewSet(NoPutModelViewSet):
     """ViewSet модели Title."""
 
-    queryset = Title.objects.all()
+    queryset = Title.objects.annotate(
+        rating=Avg('reviews__score')
+    )
     pagination_class = LimitOffsetPagination
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
