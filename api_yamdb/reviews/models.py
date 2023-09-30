@@ -1,9 +1,8 @@
+from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from users.models import MyUser
 
-
-from users.models import MyUser
+User = get_user_model()
 
 
 class Genre(models.Model):
@@ -17,7 +16,7 @@ class Genre(models.Model):
         unique=True,)
 
     class Meta:
-        ordering = ['-id']
+        ordering = ('-id',)
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
 
@@ -50,7 +49,7 @@ class Title(models.Model):
     description = models.TextField(null=True, verbose_name='Описание',)
 
     class Meta:
-        ordering = ['-id']
+        ordering = ('-id',)
         verbose_name = 'Название'
         verbose_name_plural = 'Названия'
 
@@ -90,7 +89,7 @@ class GenreTitle(models.Model):
 class Review(models.Model):
     """Модель для отзывов."""
     author = models.ForeignKey(
-        MyUser, on_delete=models.CASCADE, related_name='author')
+        User, on_delete=models.CASCADE, related_name='author')
     review = models.ForeignKey(
         Title, on_delete=models.CASCADE, related_name='review', null=True)
     text = models.TextField()
@@ -101,10 +100,10 @@ class Review(models.Model):
         related_name='genre', blank=True, null=True
     )
     score = models.IntegerField(
-        validators=[
+        validators=(
             MinValueValidator(0),
             MaxValueValidator(10)
-        ]
+        )
     )
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
@@ -113,7 +112,7 @@ class Review(models.Model):
 class Comment(models.Model):
     """Модель для комментов к отзывам."""
     author = models.ForeignKey(
-        MyUser, on_delete=models.CASCADE, related_name='comments')
+        User, on_delete=models.CASCADE, related_name='comments')
     comment = models.ForeignKey(
         Review, on_delete=models.CASCADE, related_name='comments', null=True)
     text = models.TextField()

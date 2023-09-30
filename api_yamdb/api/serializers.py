@@ -1,38 +1,62 @@
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
+from api.messages import (
+    USER_CREATE_EXIST_EMAIL_ERR, USER_CREATE_EXIST_NAME_ERR,
+    USER_CREATE_ME_ERR
+)
 from reviews.models import Category, Comment, Genre, Review, Title
-from users.models import MyUser
+
+User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
     """Сериалайзер для модели User."""
     class Meta:
-        model = MyUser
+        model = User
         fields = (
             'username', 'email', 'first_name', 'last_name', 'bio', 'role'
         )
 
-    def validate(self, value):
-        # if MyUser.objects.filter(username=value.get('username')):
-        #     raise serializers.ValidationError(
-        #         'Такой пользователь уже существует'
-        #     )
-        # if MyUser.objects.filter(email=value.get('email')):
-        #     raise serializers.ValidationError(
-        #         'Пользователь с такой почтой уже существует'
-        #     )
-        if value.get('username') == 'me':
-            raise serializers.ValidationError(
-                'Запрещено и спользовать имя me'
-            )
-        return value
+    def validate(self, data):
+        if data.get('username') == 'me':
+            raise serializers.ValidationError(USER_CREATE_ME_ERR)
+        return data
 
 
-class CreateUserSerialiser(UserSerializer):
-    """Сериалайзер для создания объекта модели User."""     # Хрень
-    class Meta:
-        model = MyUser
-        fields = ('email', 'username')
+class CreateUserSerializer(serializers.Serializer):
+    """Сериалайзер для регистрации нового пользователя."""
+    email = serializers.EmailField(required=True, max_length=254)
+    username = serializers.RegexField(
+        regex=r'^[\w.@+-]+\Z',
+        required=True,
+        max_length=150
+    )
+
+    def validate(self, data):
+        email_in_db = User.objects.filter(email=data.get('email'))
+        username_in_db = User.objects.filter(username=data.get('username'))
+
+        if data.get('username') == 'me':
+            raise serializers.ValidationError(USER_CREATE_ME_ERR)
+        if email_in_db:
+            if username_in_db:
+                return data
+            raise serializers.ValidationError(USER_CREATE_EXIST_EMAIL_ERR)
+        else:
+            if username_in_db:
+                raise serializers.ValidationError(USER_CREATE_EXIST_NAME_ERR)
+            return data
+
+
+class GetTokenSerializer(serializers.Serializer):
+    """Сериалайзер для получения JWT токена."""
+    username = serializers.RegexField(
+        regex=r'^[\w.@+-]+\Z',
+        required=True,
+        max_length=150
+    )
+    confirmation_code = serializers.CharField(required=True, max_length=150)
 
 
 class CategorySerializer(serializers.ModelSerializer):
