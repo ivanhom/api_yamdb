@@ -6,7 +6,7 @@ from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import (
-    filters, mixins, permissions, serializers, status, viewsets
+    filters, mixins, permissions, status, viewsets
 )
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
@@ -20,7 +20,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 
 from api.filters import TitleFilter
-from api.messages import INVALID_TOKEN_ERR, REVIEW_CREATE_EXIST_ERR
+from api.messages import INVALID_TOKEN_ERR
 from api.mixins import CreateListViewSet, NoPutModelViewSet
 from api.serializers import (
     CategorySerializer, CommentSerializer, CreateUserSerializer,
@@ -83,7 +83,7 @@ class CommentViewSet(NoPutModelViewSet):
     pagination_class = PageNumberPagination
 
     def get_related_post(self):
-        return get_object_or_404(Review, pk=self.kwargs['review_id'])
+        return get_object_or_404(Review, pk=self.kwargs.get('review_id'))
 
     def get_queryset(self):
         return self.get_related_post().comments.all()
@@ -108,11 +108,7 @@ class ReviewViewSet(NoPutModelViewSet):
         title_id = self.kwargs.get('title_id')
         title = get_object_or_404(Title, id=title_id)
         user = self.request.user
-        if Review.objects.filter(title_id=title_id, author=user).exists():
-            raise serializers.ValidationError(
-                REVIEW_CREATE_EXIST_ERR,
-                status.HTTP_400_BAD_REQUEST
-            )
+
         serializer.save(author=user, title=title)
 
 
