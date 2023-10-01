@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -30,7 +32,13 @@ class Title(models.Model):
     name = models.CharField(
         max_length=256,)
 
-    year = models.SmallIntegerField(
+    year = models.PositiveSmallIntegerField(
+        validators=(
+            MaxValueValidator(
+                int(datetime.now().year),
+                message='Нельзя указать год в будущем'
+            ),
+        ),
         verbose_name='Год выпуска',)
 
     genre = models.ManyToManyField(
@@ -45,7 +53,7 @@ class Title(models.Model):
         null=True,
         db_column='category',
         on_delete=models.SET_NULL,
-        related_name='titles',
+        related_name='author',
         verbose_name='Категория',)
 
     description = models.TextField(null=True, verbose_name='Описание',)
@@ -79,8 +87,14 @@ class Category(models.Model):
 
 class GenreTitle(models.Model):
     """Модель для связи жанров и произведений."""
-    title = models.ForeignKey(Title, on_delete=models.CASCADE)
-    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        related_name='title')
+    genre = models.ForeignKey(
+        Genre,
+        on_delete=models.CASCADE,
+        related_name='genre')
 
     class Meta:
         verbose_name = 'Связь жанр-произведение'
@@ -115,11 +129,11 @@ class Review(models.Model):
     class Meta:
         verbose_name = 'Обзор'
         verbose_name_plural = 'Обзоры'
-        constraints = [
+        constraints = (
             models.UniqueConstraint(
-                fields=['title', 'author'], name='unique_review'
+                fields=('title', 'author',), name='unique_review'
             ),
-        ]
+        )
 
     def __str__(self):
         return self.text[:50]
@@ -128,7 +142,7 @@ class Review(models.Model):
 class Comment(models.Model):
     """Модель для комментов к отзывам."""
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='comments')
+        User, on_delete=models.CASCADE, related_name='author')
     comment = models.ForeignKey(
         Review, on_delete=models.CASCADE, related_name='comments', null=True)
     text = models.TextField()
