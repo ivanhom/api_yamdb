@@ -123,6 +123,11 @@ ROLE_CHOICE = (
     ('moderator', 'Модератор'),
     ('admin', 'Администратор')
 )
+
+USER_INFO_URL_PATH = 'me'    # Путь в URL к информации о пользователе
+
+USERNAME_REGEX = r'^[\w.@+-]+\Z'    # Допустимые символы для поля username
+
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 
 EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'

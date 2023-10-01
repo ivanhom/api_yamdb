@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
@@ -19,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
     def validate(self, data):
-        if data.get('username') == 'me':
+        if data.get('username') == settings.USER_INFO_URL_PATH:
             raise serializers.ValidationError(USER_CREATE_ME_ERR)
         return data
 
@@ -28,7 +29,7 @@ class CreateUserSerializer(serializers.Serializer):
     """Сериалайзер для регистрации нового пользователя."""
     email = serializers.EmailField(required=True, max_length=254)
     username = serializers.RegexField(
-        regex=r'^[\w.@+-]+\Z',
+        regex=settings.USERNAME_REGEX,
         required=True,
         max_length=150
     )
@@ -37,7 +38,7 @@ class CreateUserSerializer(serializers.Serializer):
         email_in_db = User.objects.filter(email=data.get('email'))
         username_in_db = User.objects.filter(username=data.get('username'))
 
-        if data.get('username') == 'me':
+        if data.get('username') == settings.USER_INFO_URL_PATH:
             raise serializers.ValidationError(USER_CREATE_ME_ERR)
         if email_in_db:
             if username_in_db:
@@ -52,7 +53,7 @@ class CreateUserSerializer(serializers.Serializer):
 class GetTokenSerializer(serializers.Serializer):
     """Сериалайзер для получения JWT токена."""
     username = serializers.RegexField(
-        regex=r'^[\w.@+-]+\Z',
+        regex=settings.USERNAME_REGEX,
         required=True,
         max_length=150
     )

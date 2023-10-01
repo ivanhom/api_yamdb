@@ -11,7 +11,7 @@ class MyUser(AbstractUser):
         unique=True,
         max_length=150,
         validators=(RegexValidator(
-            regex=r'^[\w.@+-]+\Z',
+            regex=settings.USERNAME_REGEX,
             message='Недопустимый символ в имени пользователя'
         ),),
         help_text=(
@@ -55,12 +55,16 @@ class MyUser(AbstractUser):
 
     @property
     def is_admin(self):
-        return self.role == 'admin'
+        return (
+            self.role == settings.ROLE_CHOICE[2][0]
+            or self.is_staff
+            or self.is_superuser
+        )
 
     @property
     def is_moderator(self):
-        return self.role == 'moderator'
+        return self.role == settings.ROLE_CHOICE[1][0]
 
     @property
     def is_user(self):
-        return self.role == 'user'
+        return self.role == settings.ROLE_CHOICE[0][0]
