@@ -26,7 +26,7 @@ class IsAdminOrReadOnly(permissions.BasePermission):
 
 class IsSuperUserOrAdmin(permissions.BasePermission):
     """
-    Разрешает доступ к запросам только Администратору
+    Разрешает доступ к запросам только администратору
     или суперпользователю.
     """
 

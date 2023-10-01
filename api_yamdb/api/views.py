@@ -20,7 +20,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 
 from api.filters import TitleFilter
-from api.messages import INVALID_TOKEN_ERR
+from api.messages import INVALID_TOKEN_ERR, REVIEW_CREATE_EXIST_ERR
 from api.mixins import CreateListViewSet, NoPutModelViewSet
 from api.serializers import (
     CategorySerializer, CommentSerializer, CreateUserSerializer,
@@ -80,7 +80,6 @@ class CommentViewSet(NoPutModelViewSet):
 
     serializer_class = CommentSerializer
     permission_classes = (IsAuthorOrJustReading, IsAuthenticatedOrReadOnly)
-
     pagination_class = PageNumberPagination
 
     def get_related_post(self):
@@ -111,7 +110,7 @@ class ReviewViewSet(NoPutModelViewSet):
         user = self.request.user
         if Review.objects.filter(title_id=title_id, author=user).exists():
             raise serializers.ValidationError(
-                'Вы уже оставляли отзыв на это произведение.',
+                REVIEW_CREATE_EXIST_ERR,
                 status.HTTP_400_BAD_REQUEST
             )
         serializer.save(author=user, title=title)
