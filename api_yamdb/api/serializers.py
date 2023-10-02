@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
@@ -7,9 +6,7 @@ from api.messages import (
     REVIEW_CREATE_EXIST_ERR, USER_CREATE_EXIST_EMAIL_ERR,
     USER_CREATE_EXIST_NAME_ERR, USER_CREATE_ME_ERR
 )
-from reviews.models import Category, Comment, Genre, Review, Title
-
-User = get_user_model()
+from reviews.models import Category, Comment, Genre, Review, Title, User
 
 
 class UserSerializer(serializers.ModelSerializer):
