@@ -61,7 +61,7 @@ class Title(models.Model):
         return self.name[:15]
 
     def save(self, *args, **kwargs):
-        """Перед сохранением проверям год"""
+        """Перед сохранением проверям год."""
         if self.year > datetime.today().year:
             raise ValidationError("Нельзя указать год в будущем")
         elif self.year <= 0:
