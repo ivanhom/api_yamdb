@@ -2,25 +2,24 @@ from django.contrib import admin
 
 from reviews.models import Category, Comment, Genre, Review, Title
 
+admin.site.empty_value_display = '-пусто-'
+
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('pk', 'name', 'slug')
     search_fields = ('name',)
-    empty_value_display = '-пусто-'
 
 
 class GenreAdmin(admin.ModelAdmin):
     list_display = ('pk', 'name', 'slug')
     search_fields = ('name',)
-    empty_value_display = '-пусто-'
 
 
 class TitleAdmin(admin.ModelAdmin):
     list_display = ('pk', 'name', 'year',
-                    'description', 'category', 'genre')
+                    'description', 'category')
     search_fields = ('name', 'year', 'genre', 'category')
     list_filter = ('year',)
-    empty_value_display = '-пусто-'
 
 
 class ReviewAdmin(admin.ModelAdmin):
@@ -28,26 +27,11 @@ class ReviewAdmin(admin.ModelAdmin):
                     'author', 'score', 'pub_date')
     search_fields = ('title', 'author')
     list_filter = ('pub_date')
-    empty_value_display = '-пусто-'
 
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('pk', 'review', 'text', 'author', 'pub_date')
     search_fields = ('review', 'author')
-    empty_value_display = '-пусто-'
-
-
-class UserAdmin(admin.ModelAdmin):
-    list_display = (
-        'pk',
-        'username',
-        'email',
-        'first_name',
-        'last_name',
-        'bio',
-        'role',
-        'confirmation_code',
-    )
 
 
 admin.site.register(Category, CategoryAdmin)

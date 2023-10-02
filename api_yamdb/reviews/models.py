@@ -1,8 +1,7 @@
-from datetime import datetime
-
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -35,7 +34,7 @@ class Title(models.Model):
     year = models.PositiveSmallIntegerField(
         validators=(
             MaxValueValidator(
-                int(datetime.now().year),
+                int(timezone.now().year),
                 message='Нельзя указать год в будущем'
             ),
         ),

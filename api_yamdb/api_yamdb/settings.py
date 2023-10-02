@@ -118,12 +118,6 @@ STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
 
 AUTH_USER_MODEL = 'users.MyUser'
 
-ROLE_CHOICE = (
-    ('user', 'Аутентифицированный пользователь'),
-    ('moderator', 'Модератор'),
-    ('admin', 'Администратор')
-)
-
 USER_INFO_URL_PATH = 'me'    # Путь в URL к информации о пользователе
 
 USERNAME_REGEX = r'^[\w.@+-]+\Z'    # Допустимые символы для поля username

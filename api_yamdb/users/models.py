@@ -3,6 +3,16 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
 
+ADMIN = 'admin'
+MODERATOR = 'moderator'
+USER = 'user'
+
+
+class UserRole(models.TextChoices):
+    admin = ADMIN
+    moderator = MODERATOR
+    user = USER
+
 
 class MyUser(AbstractUser):
     """Кастомная модель пользователя."""
@@ -40,10 +50,10 @@ class MyUser(AbstractUser):
     )
     role = models.CharField(
         verbose_name='Роль',
-        choices=settings.ROLE_CHOICE,
+        choices=UserRole.choices,
         max_length=20,
         blank=False,
-        default='user'
+        default=USER
     )
 
     class Meta:
@@ -56,15 +66,15 @@ class MyUser(AbstractUser):
     @property
     def is_admin(self):
         return (
-            self.role == settings.ROLE_CHOICE[2][0]
+            self.role == ADMIN
             or self.is_staff
             or self.is_superuser
         )
 
     @property
     def is_moderator(self):
-        return self.role == settings.ROLE_CHOICE[1][0]
+        return self.role == MODERATOR
 
     @property
     def is_user(self):
-        return self.role == settings.ROLE_CHOICE[0][0]
+        return self.role == USER

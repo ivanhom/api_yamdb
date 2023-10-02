@@ -108,7 +108,6 @@ class ReviewViewSet(NoPutModelViewSet):
         title_id = self.kwargs.get('title_id')
         title = get_object_or_404(Title, id=title_id)
         user = self.request.user
-
         serializer.save(author=user, title=title)
 
 
