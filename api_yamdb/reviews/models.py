@@ -1,7 +1,8 @@
+from datetime import datetime
+
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.utils import timezone
 
 User = get_user_model()
 
@@ -34,7 +35,7 @@ class Title(models.Model):
     year = models.PositiveSmallIntegerField(
         validators=(
             MaxValueValidator(
-                int(timezone.now().year),
+                int(datetime.now().year),
                 message='Нельзя указать год в будущем'
             ),
         ),
@@ -106,7 +107,7 @@ class GenreTitle(models.Model):
 class Review(models.Model):
     """Модель для отзывов."""
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='author')
+        User, on_delete=models.CASCADE, related_name='reviews')
     title = models.ForeignKey(
         Title, on_delete=models.CASCADE, related_name='reviews', null=True)
     text = models.TextField()
@@ -114,7 +115,7 @@ class Review(models.Model):
         upload_to='review/', null=True, blank=True)
     genre = models.ForeignKey(
         Genre, on_delete=models.CASCADE,
-        related_name='genre', blank=True, null=True
+        related_name='reviews', blank=True, null=True
     )
     score = models.IntegerField(
         validators=(
@@ -141,7 +142,7 @@ class Review(models.Model):
 class Comment(models.Model):
     """Модель для комментов к отзывам."""
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='author_comments')
+        User, on_delete=models.CASCADE, related_name='comments')
     comment = models.ForeignKey(
         Review, on_delete=models.CASCADE, related_name='comments', null=True)
     text = models.TextField()
