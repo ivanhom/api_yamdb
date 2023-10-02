@@ -41,12 +41,12 @@ class CreateUserSerializer(serializers.Serializer):
 
         if data.get('username') == settings.USER_INFO_URL_PATH:
             raise serializers.ValidationError(USER_CREATE_ME_ERR)
-        if email_in_db:
-            if username_in_db:
+        if email_in_db.exists():
+            if username_in_db.exists():
                 return data
             raise serializers.ValidationError(USER_CREATE_EXIST_EMAIL_ERR)
         else:
-            if username_in_db:
+            if username_in_db.exists():
                 raise serializers.ValidationError(USER_CREATE_EXIST_NAME_ERR)
             return data
 
