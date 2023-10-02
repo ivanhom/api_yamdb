@@ -3,6 +3,7 @@ from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from rest_framework.exceptions import ValidationError
 
 User = get_user_model()
 
@@ -33,12 +34,6 @@ class Title(models.Model):
         max_length=256,)
 
     year = models.PositiveSmallIntegerField(
-        validators=(
-            MaxValueValidator(
-                int(datetime.now().year),
-                message='Нельзя указать год в будущем'
-            ),
-        ),
         verbose_name='Год выпуска',)
 
     genre = models.ManyToManyField(
@@ -51,9 +46,8 @@ class Title(models.Model):
         'Category',
         blank=True,
         null=True,
-        db_column='category',
         on_delete=models.SET_NULL,
-        related_name='author',
+        related_name='titles',
         verbose_name='Категория',)
 
     description = models.TextField(null=True, verbose_name='Описание',)
@@ -65,6 +59,14 @@ class Title(models.Model):
 
     def __str__(self):
         return self.name[:15]
+
+    def save(self, *args, **kwargs):
+        """Перед сохранением проверям год"""
+        if self.year > datetime.today().year:
+            raise ValidationError("Нельзя указать год в будущем")
+        elif self.year <= 0:
+            raise ValidationError("Нельзя указать год меньше 1")
+        super(Title, self).save(*args, **kwargs)
 
 
 class Category(models.Model):
