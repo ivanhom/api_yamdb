@@ -26,16 +26,17 @@ class ReviewAdmin(admin.ModelAdmin):
     list_display = ('pk', 'title', 'text',
                     'author', 'score', 'pub_date')
     search_fields = ('title', 'author')
-    list_filter = ('pub_date')
+    list_filter = ('pub_date', )
 
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'review', 'text', 'author', 'pub_date')
-    search_fields = ('review', 'author')
+    list_display = ('pk', 'comment', 'text', 'author', 'pub_date')
+    search_fields = ('comment', 'author')
+    list_filter = ('pub_date', )
 
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Genre, GenreAdmin)
 admin.site.register(Title, TitleAdmin)
-admin.site.register(Review)
-admin.site.register(Comment)
+admin.site.register(Review, ReviewAdmin)
+admin.site.register(Comment, CommentAdmin)
