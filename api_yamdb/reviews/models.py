@@ -1,9 +1,9 @@
-from datetime import datetime
-
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from rest_framework.exceptions import ValidationError
+
+from reviews.validators import validate_year
+
 
 User = get_user_model()
 
@@ -34,7 +34,8 @@ class Title(models.Model):
         max_length=256,)
 
     year = models.PositiveSmallIntegerField(
-        verbose_name='Год выпуска',)
+        verbose_name='Год выпуска',
+        validators=(validate_year, ),)
 
     genre = models.ManyToManyField(
         'Genre',
@@ -60,14 +61,6 @@ class Title(models.Model):
     def __str__(self):
         return self.name[:15]
 
-    def save(self, *args, **kwargs):
-        """Перед сохранением проверям год."""
-        if self.year > datetime.today().year:
-            raise ValidationError("Нельзя указать год в будущем")
-        elif self.year <= 0:
-            raise ValidationError("Нельзя указать год меньше 1")
-        super(Title, self).save(*args, **kwargs)
-
 
 class Category(models.Model):
     """Модель для Категорий."""
@@ -92,11 +85,11 @@ class GenreTitle(models.Model):
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
-        related_name='title')
+        related_name='generes')
     genre = models.ForeignKey(
         Genre,
         on_delete=models.CASCADE,
-        related_name='genre_title')
+        related_name='title')
 
     class Meta:
         verbose_name = 'Связь жанр-произведение'
